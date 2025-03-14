@@ -1,6 +1,6 @@
 /* General Styles */
 body {
-  font-family: Impact, 'Arial Narrow Bold', sans-serif;
+  font-family: 'Arial Narrow Bold', sans-serif;
   text-align: center;
   background-color: #f4f4f9;
   color: #000;
@@ -51,7 +51,7 @@ body.dark-mode .snippet-display {
   height: 300px; /* Set a fixed height for the editor */
   border-radius: 5px;
   font-family: 'Courier New', Courier, monospace;
-  font-size: 16px;
+  font-size: 20px;
   line-height: 1.6;
   padding: 10px; /* Add some padding for better readability */
 }
@@ -90,7 +90,7 @@ body.dark-mode .stats {
 }
 
 .stats p {
-  font-size: 18px;
+  font-size: 22px;
   margin: 0;
 }
 

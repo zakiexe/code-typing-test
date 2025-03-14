@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Typing Test Results</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <h1>Typing Test Results</h1>
+  <div class="stats">
+    <p>WPM: <span id="wpm"></span></p>
+    <p>Accuracy: <span id="accuracy"></span>%</p>
+  </div>
+  <button id="restart">Try Again</button>
+
+  <script>
+    // Load results from localStorage
+    document.getElementById("wpm").textContent = localStorage.getItem("wpm") || "0";
+    document.getElementById("accuracy").textContent = localStorage.getItem("accuracy") || "100";
+
+    // Maintain theme consistency
+    let savedTheme = localStorage.getItem("theme");
+    if (savedTheme === "dracula") {
+      document.body.classList.add("dark-mode");
+    }
+
+    // Restart button redirects to main page
+    document.getElementById("restart").onclick = () => {
+      window.location.href = "index.html";
+    };
+  </script>
+</body>
+</html>
