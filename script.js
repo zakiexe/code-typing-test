@@ -1,6 +1,6 @@
 const snippets = [
   `function factorial(n) {
-    if (n === 0) return 1;
+    if (n == 0) return 1;
     return n * factorial(n - 1);
   }
   console.log(factorial(5));`,
@@ -8,7 +8,7 @@ const snippets = [
   `function isPrime(num) {
     if (num <= 1) return false;
     for (let i = 2; i <= Math.sqrt(num); i++) {
-      if (num % i === 0) return false;
+      if (num % i == 0) return false;
     }
     return true;
   }
