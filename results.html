@@ -10,6 +10,7 @@
   <div class="stats">
     <p>WPM: <span id="wpm"></span></p>
     <p>Accuracy: <span id="accuracy"></span>%</p>
+    <p>Test Duration: <span id="duration"></span></p>
   </div>
   <button id="restart">Try Again</button>
 
@@ -17,6 +18,8 @@
     // Load results from localStorage
     document.getElementById("wpm").textContent = localStorage.getItem("wpm") || "0";
     document.getElementById("accuracy").textContent = localStorage.getItem("accuracy") || "100";
+    let duration = localStorage.getItem("duration") || "60";
+    document.getElementById("duration").textContent = duration === "unlimited" ? "Unlimited" : duration + " seconds";
 
     // Maintain theme consistency
     let savedTheme = localStorage.getItem("theme");

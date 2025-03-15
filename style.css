@@ -51,9 +51,9 @@ body.dark-mode .snippet-display {
   height: 300px; /* Set a fixed height for the editor */
   border-radius: 5px;
   font-family: 'Courier New', Courier, monospace;
-  font-size: 20px;
+  font-size: 25px;
   line-height: 1.6;
-  padding: 10px; /* Add some padding for better readability */
+  padding: 10px; 
 }
 
 .CodeMirror-gutters {

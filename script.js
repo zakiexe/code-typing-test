@@ -22,6 +22,7 @@ const snippets = [
 let snippetEditor, typingEditor;
 let currentSnippet = "";
 let timer, timeLeft = 60, testStarted = false;
+let testDuration = "60"; // Default duration (in seconds) or "unlimited".
 
 const timerDisplay = document.getElementById("timer");
 const wpmDisplay = document.getElementById("wpm");
@@ -29,7 +30,7 @@ const accuracyDisplay = document.getElementById("accuracy");
 const themeToggle = document.getElementById("theme-toggle");
 const restartButton = document.getElementById("restart-button");
 
-// Initialize editors
+// Initialize CodeMirror editors
 function initEditors() {
   snippetEditor = CodeMirror.fromTextArea(document.getElementById("snippet-editor"), {
     mode: "javascript",
@@ -49,42 +50,35 @@ function initEditors() {
   typingEditor.on("change", handleTyping);
 }
 
-// Handle typing input
-function handleTyping() {
-  if (!testStarted) {
-    startTest();
-    testStarted = true;
-  }
-
-  const typedText = normalizeText(typingEditor.getValue());
-  updateStats(typedText);
-  highlightMistakesInSnippet(typedText);
-
-  if (typedText === normalizeText(currentSnippet)) endTest();
-}
-
-// Normalize text by removing leading spaces and newlines
+// Normalize text by trimming both start and end of each line
 function normalizeText(text) {
-  return text.split("\n").map(line => line.trimStart()).join("\n");
+  return text.split("\n").map(line => line.trim()).join("\n");
 }
 
-// Update WPM and accuracy
+// Update WPM and accuracy statistics
 function updateStats(typedText) {
-  let correctChars = typedText.split("").filter((char, idx) => char === normalizeText(currentSnippet)[idx]).length;
-  let elapsedMinutes = (60 - timeLeft) / 60 || (1 / 60);
-  let wpm = Math.round((correctChars / 5) / elapsedMinutes);
-  let accuracy = Math.round((correctChars / typedText.length) * 100);
+  const normalizedSnippet = normalizeText(currentSnippet);
+  let correctChars = typedText.split("").filter((char, idx) => char === normalizedSnippet[idx]).length;
+  let elapsedMinutes;
+  if (testDuration !== "unlimited") {
+    elapsedMinutes = (parseInt(testDuration) - timeLeft) / 60;
+  } else {
+    elapsedMinutes = (testStarted ? (new Date() - startTime) / 60000 : 1/60);
+  }
+  let wpm = Math.round((correctChars / 5) / (elapsedMinutes || (1 / 60)));
+  let accuracy = Math.round((correctChars / (typedText.length || 1)) * 100);
 
   wpmDisplay.textContent = wpm || "0";
   accuracyDisplay.textContent = accuracy || "0";
 }
 
-// Highlight mistakes directly in the snippet editor
+// Highlight correct and incorrect characters in the snippet editor
 function highlightMistakesInSnippet(typedText) {
+  const normalizedSnippet = normalizeText(currentSnippet);
   snippetEditor.operation(() => {
-    snippetEditor.getDoc().setValue(normalizeText(currentSnippet));
+    snippetEditor.getDoc().setValue(normalizedSnippet);
     for (let i = 0; i < typedText.length; i++) {
-      let expectedChar = normalizeText(currentSnippet)[i];
+      let expectedChar = normalizedSnippet[i];
       let actualChar = typedText[i];
       let fromPos = snippetEditor.posFromIndex(i);
       let toPos = snippetEditor.posFromIndex(i + 1);
@@ -97,45 +91,93 @@ function highlightMistakesInSnippet(typedText) {
   });
 }
 
-// Start the timer
-function startTest() {
-  timer = setInterval(() => {
-    timeLeft--;
-    timerDisplay.textContent = timeLeft;
-    if (timeLeft <= 0) endTest();
-  }, 1000);
+// Record the start time (used in unlimited mode for stats)
+let startTime = null;
+
+// Handle typing events
+function handleTyping() {
+  if (!testStarted) {
+    startTest();
+    testStarted = true;
+    if (testDuration === "unlimited") {
+      startTime = new Date();
+    }
+  }
+
+  const typedText = normalizeText(typingEditor.getValue());
+  updateStats(typedText);
+  highlightMistakesInSnippet(typedText);
+
+  const normalizedSnippet = normalizeText(currentSnippet);
+  // End test if the user has typed the entire snippet correctly.
+  if (typedText === normalizedSnippet) {
+    endTest();
+    return;
+  }
+
+  // Additionally, if the user has reached the last line and completed it, end the test.
+  const snippetLines = normalizedSnippet.split("\n");
+  const userLines = typingEditor.getValue().split("\n").map(line => line.trim());
+  if (
+    userLines.length >= snippetLines.length &&
+    userLines[snippetLines.length - 1].length >= snippetLines[snippetLines.length - 1].length
+  ) {
+    endTest();
+  }
 }
 
-// End the test
+// Start the timer if a time limit is set
+function startTest() {
+  if (testDuration !== "unlimited") {
+    timer = setInterval(() => {
+      timeLeft--;
+      timerDisplay.textContent = timeLeft;
+      if (timeLeft <= 0) endTest();
+    }, 1000);
+  }
+}
+
+// End the test, store results, and redirect to the results page
 function endTest() {
   clearInterval(timer);
   typingEditor.setOption("readOnly", true);
 
-  // Store test results in localStorage
+  // Store test results and preferences in localStorage
   localStorage.setItem("wpm", wpmDisplay.textContent);
   localStorage.setItem("accuracy", accuracyDisplay.textContent);
   localStorage.setItem("theme", document.body.classList.contains("dark-mode") ? "dracula" : "eclipse");
+  localStorage.setItem("duration", testDuration);
 
-  // Redirect to results page
   window.location.href = "results.html";
 }
 
-// Restart test without resetting theme
+// Restart the test without resetting the theme
 restartButton.onclick = () => {
+  // Re-read the duration option from the select element.
+  const durationSelect = document.getElementById("duration-select");
+  if (durationSelect) {
+    testDuration = durationSelect.value;
+  }
+  if (testDuration !== "unlimited") {
+    timeLeft = parseInt(testDuration);
+    timerDisplay.textContent = timeLeft;
+  } else {
+    timerDisplay.textContent = "Unlimited";
+  }
+
   typingEditor.setValue("");
   typingEditor.setOption("readOnly", false);
   clearInterval(timer);
-  timeLeft = 60;
   testStarted = false;
-  timerDisplay.textContent = timeLeft;
   wpmDisplay.textContent = "0";
   accuracyDisplay.textContent = "100";
+  startTime = null;
 
   currentSnippet = snippets[Math.floor(Math.random() * snippets.length)];
   snippetEditor.setValue(currentSnippet);
 };
 
-// Store theme preference in localStorage
+// Toggle theme and store the preference
 themeToggle.onclick = () => {
   document.body.classList.toggle("dark-mode");
   let theme = document.body.classList.contains("dark-mode") ? "dracula" : "eclipse";
@@ -144,12 +186,37 @@ themeToggle.onclick = () => {
   localStorage.setItem("theme", theme);
 };
 
-// Load theme preference on page load
+// On page load, load preferences, set the duration, and initialize the test
 window.onload = () => {
   let savedTheme = localStorage.getItem("theme") || "eclipse";
   if (savedTheme === "dracula") {
     document.body.classList.add("dark-mode");
   }
+
+  // Read the duration option from the select element (and update if a stored value exists)
+  const durationSelect = document.getElementById("duration-select");
+  if (durationSelect) {
+    // If the user has previously selected a duration, use that.
+    let storedDuration = localStorage.getItem("selectedDuration");
+    if (storedDuration) {
+      durationSelect.value = storedDuration;
+      testDuration = storedDuration;
+    } else {
+      testDuration = durationSelect.value;
+    }
+    if (testDuration !== "unlimited") {
+      timeLeft = parseInt(testDuration);
+      timerDisplay.textContent = timeLeft;
+    } else {
+      timerDisplay.textContent = "Unlimited";
+    }
+    // Refresh the page when a new duration is selected.
+    durationSelect.addEventListener("change", function(){
+      localStorage.setItem("selectedDuration", this.value);
+      window.location.reload();
+    });
+  }
+
   currentSnippet = snippets[Math.floor(Math.random() * snippets.length)];
   initEditors();
   snippetEditor.setOption("theme", savedTheme);
