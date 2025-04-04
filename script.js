@@ -1,23 +1,53 @@
-const snippets = [
-  `function factorial(n) {
-    if (n == 0) return 1;
-    return n * factorial(n - 1);
-  }
-  console.log(factorial(5));`,
+let selectedLanguage = "javascript"; // default
+const languageSelect = document.getElementById("language-select");
 
-  `function isPrime(num) {
-    if (num <= 1) return false;
-    for (let i = 2; i <= Math.sqrt(num); i++) {
-      if (num % i == 0) return false;
+const snippetsByLanguage = {
+  javascript: [
+    `function factorial(n) {
+      if (n == 0) return 1;
+      return n * factorial(n - 1);
     }
-    return true;
-  }
-  console.log(isPrime(23));`,
+    console.log(factorial(5));`,
 
-  `const numbers = [1,2,3,4,5];
-  let sum = numbers.reduce((acc, val) => acc + val, 0);
-  console.log(sum);`
-];
+    `const numbers = [1,2,3,4,5];
+    let sum = numbers.reduce((acc, val) => acc + val, 0);
+    console.log(sum);`
+  ],
+  python: [
+    `def factorial(n):
+    return 1 if n == 0 else n * factorial(n - 1)
+
+print(factorial(5))`,
+
+    `numbers = [1, 2, 3, 4, 5]
+sum = sum(numbers)
+print(sum)`
+  ],
+  cpp: [
+    `#include <iostream>
+using namespace std;
+
+int factorial(int n) {
+  if (n == 0) return 1;
+  return n * factorial(n - 1);
+}
+
+int main() {
+  cout << factorial(5);
+  return 0;
+}`,
+
+    `#include <iostream>
+using namespace std;
+
+int main() {
+  int numbers[] = {1,2,3,4,5}, sum = 0;
+  for(int n : numbers) sum += n;
+  cout << sum;
+}`
+  ]
+};
+
 
 let snippetEditor, typingEditor;
 let currentSnippet = "";
@@ -32,8 +62,12 @@ const restartButton = document.getElementById("restart-button");
 
 // Initialize CodeMirror editors
 function initEditors() {
+  let mode;
+  if (selectedLanguage === "cpp") mode = "text/x-c++src";
+  else mode = selectedLanguage;
+
   snippetEditor = CodeMirror.fromTextArea(document.getElementById("snippet-editor"), {
-    mode: "javascript",
+    mode: mode,
     theme: "eclipse",
     lineNumbers: true,
     readOnly: true,
@@ -41,7 +75,7 @@ function initEditors() {
   });
 
   typingEditor = CodeMirror.fromTextArea(document.getElementById("typing-editor"), {
-    mode: "javascript",
+    mode: mode,
     theme: "eclipse",
     lineNumbers: true,
     lineWrapping: true
@@ -49,6 +83,7 @@ function initEditors() {
 
   typingEditor.on("change", handleTyping);
 }
+
 
 // Normalize text by trimming both start and end of each line
 function normalizeText(text) {
@@ -173,7 +208,9 @@ restartButton.onclick = () => {
   accuracyDisplay.textContent = "100";
   startTime = null;
 
-  currentSnippet = snippets[Math.floor(Math.random() * snippets.length)];
+  const langSnippets = snippetsByLanguage[selectedLanguage] || [];
+  currentSnippet = langSnippets[Math.floor(Math.random() * langSnippets.length)];
+
   snippetEditor.setValue(currentSnippet);
 };
 
@@ -216,8 +253,24 @@ window.onload = () => {
       window.location.reload();
     });
   }
+  const storedLang = localStorage.getItem("selectedLanguage");
+if (storedLang) {
+  selectedLanguage = storedLang;
+  languageSelect.value = storedLang;
+}
 
-  currentSnippet = snippets[Math.floor(Math.random() * snippets.length)];
+languageSelect.addEventListener("change", function () {
+  selectedLanguage = this.value;
+  localStorage.setItem("selectedLanguage", selectedLanguage);
+  window.location.reload();
+});
+
+
+  
+
+  const langSnippets = snippetsByLanguage[selectedLanguage] || [];
+  currentSnippet = langSnippets[Math.floor(Math.random() * langSnippets.length)];
+
   initEditors();
   snippetEditor.setOption("theme", savedTheme);
   typingEditor.setOption("theme", savedTheme);
