@@ -11,65 +11,10 @@ body.dark-mode {
   background-color: #121212;
   color: #fff;
 }
-
-.container {
-  max-width: 800px;
-  margin: auto;
-  padding: 20px;
-}
-
-/* Code Snippet Display */
-.snippet-display {
-  background-color: #f8f8f8;
-  color: #333;
-  font-family: 'Courier New', Courier, monospace;
-  padding: 15px;
-  border-radius: 5px;
-  margin-bottom: 20px;
-  text-align: left;
-  overflow-x: auto;
-  border: 1px solid #ddd;
-  transition: background-color 0.3s, color 0.3s;
-}
-
 body.dark-mode .snippet-display {
   background-color: #1e1e1e;
   color: #ddd;
   border-color: #444;
-}
-
-/* Editor Container */
-#editor-container {
-  margin: 20px 0;
-  border-radius: 5px;
-  overflow: hidden;
-  background-color: #282c34; /* Dark background for editor */
-}
-
-/* CodeMirror Customization */
-.CodeMirror {
-  height: 300px; /* Set a fixed height for the editor */
-  border-radius: 5px;
-  font-family: 'Courier New', Courier, monospace;
-  font-size: 25px;
-  line-height: 1.6;
-  padding: 10px; 
-}
-
-.CodeMirror-gutters {
-  background-color: #333; /* Darker gutter background */
-}
-
-.CodeMirror-linenumber {
-  color: #999; /* Lighter line number color */
-}
-
-.cm-correct {
-  color: #4caf50 !important; /* Green for correct text */
-}
-
-.cm-incorrect {
-  color: #f44336 !important; /* Red for incorrect text */
 }
 
 /* Stats Section */
@@ -94,7 +39,7 @@ body.dark-mode .stats {
   margin: 0;
 }
 
-/* Theme Toggle Button */
+/* Try Again  Button */
 button {
   padding: 10px 15px;
   background-color: #007bff;
@@ -109,3 +54,47 @@ button {
 button:hover {
   background-color: #0056b3;
 }
+
+/* Results Card */
+.results-card {
+  max-width: 400px;
+  margin: 40px auto;
+  padding: 30px;
+  background-color: #fff;
+  border-radius: 16px;
+  box-shadow: 0 6px 18px rgba(0, 0, 0, 0.1);
+  text-align: center;
+  transition: background-color 0.3s ease;
+}
+
+body.dark-mode .results-card {
+  background-color: #1e1e1e;
+  color: #f1f1f1;
+}
+
+.results-card h2 {
+  margin-bottom: 20px;
+  font-size: 26px;
+}
+
+.results-card p {
+  font-size: 20px;
+  margin: 12px 0;
+}
+
+.results-card .btn {
+  margin-top: 20px;
+}
+/* Chart Container */
+.chart-container {
+  margin: 20px 0;
+  height: 300px;
+  width: 100%;
+}
+
+body.dark-mode .chart-container {
+  background-color: #1e1e1e;
+  border-radius: 8px;
+  padding: 10px;
+}
+

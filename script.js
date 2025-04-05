@@ -276,3 +276,10 @@ languageSelect.addEventListener("change", function () {
   typingEditor.setOption("theme", savedTheme);
   snippetEditor.setValue(currentSnippet);
 };
+
+
+
+
+
+
+

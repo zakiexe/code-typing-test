@@ -32,7 +32,7 @@
     }
     /* Container to wrap the entire content */
     .container {
-      max-width: 1000px;
+      max-width: 1200px;
       margin: 0 auto;
       padding: 0 20px;
     }
@@ -46,6 +46,8 @@
     }
     .editor-container {
       margin-bottom: 20px;
+      width: 1200px;
+  
     }
     .stats {
       margin-top: 10px;
@@ -62,8 +64,8 @@
       color: red !important;
     }
     .CodeMirror {
-      font-size: 21px; /* Adjust as needed */
-      border-radius: 5px;
+      font-size: 21px; 
+      border-radius: 7px;
     }
   </style>
 </head>
@@ -72,11 +74,12 @@
 <div class="container">
   <h1>CodeSpeed</h1>
 
-  <!-- Wrap buttons in a container for better spacing -->
+  <!-- Wrap buttons in a container -->
   <div class="button-group">
-    <button id="theme-toggle">Change Theme</button>
-    <button id="restart-button">Restart Test</button>
+    <button id="theme-toggle">🌗 Toggle Theme</button>
+    <button id="restart-button">🔁 Restart</button>
   </div>
+  
 
   <!-- Duration and language select options -->
   <div style="text-align: center; margin-bottom: 20px;">
@@ -116,7 +119,6 @@
 <!-- CodeMirror JS -->
 <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.2/codemirror.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.2/mode/javascript/javascript.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.13/mode/javascript/javascript.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.13/mode/python/python.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.13/mode/clike/clike.min.js"></script>
 
